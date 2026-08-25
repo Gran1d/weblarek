@@ -98,3 +98,133 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
+### Данные
+В ходе анализа проекта было установлено: в приложении используются две сущности, которые описывают данные, 
+— товар и покупатель. Их можно описать такими интерфейсами:
+
+#### Интерфейс IProduct
+Интерфейс используется для описания структуры данных сущности товара
+```
+interface IProduct {
+  id: string;
+  description: string;
+  image: string;
+  title: string;
+  category: string;
+  price: number | null;
+}
+```
+
+#### Интерфейс IBuyer
+Интерфейс используется для описания структуры данных сущности покупателя
+```
+interface IBuyer {
+  payment: TPayment;
+  email: string;
+  phone: string;
+  address: string;
+}
+```
+
+#### Интерфейс IServerProductsData
+Интерфейс для типизированного получения данных о товарах с сервера
+```
+interface IServerProductsData {
+  items: IProduct[];
+  total: number;
+}
+```
+
+#### Интерфейс IOrderData
+Интерфейс для типизированной отправки данных на сервер о покупке
+```
+interface IOrderData extends IBuyer {
+  items: string[];
+  total: number;
+}
+```
+
+#### Интерфейс IOrderDataResponse
+Интерфейс для типизированного получения ответа с сервера о покупке
+```
+interface IOrderDataResponse{
+  id: string;
+  total: number;
+}
+```
+
+#### Тип TPayment
+Тип данных для описания способа оплаты
+```
+TPayment = 'card' | 'cash'; 
+```
+
+### Модели данных
+Для учёта данных в приложении должны быть три класса, которые будут разделены между собой по смыслу и зонам ответственности:
+
+#### Класс ProductCatalog
+Используется для работы с товарами в представленном каталоге
+
+Поля класса:
+`product: IProduct[]` - Массив хранения всех полученных товаров
+`selectedProduct: IProduct | null` - Данные выбранного товара
+
+Конструктор:  
+`constructor()` - Инициализирует стартовые значения полей класса
+
+Методы класса:  
+`saveProducts(products: IProduct[]): void` - Сохранение новый массив товаров полученный в параметрах метода;
+`getProducts(): IProducts[]` - Возвращает текущий массив товаров;
+`getProductbyID(id: string): IProducts | undefined` - Возвращает товар по его идентификатору;
+`setSelectedProduct(item: IProducts): void` - Сохранение товара в `selectedProduct`;
+`getSelectedProduct(): IProduct | null` - Получение сохраненного товара;
+
+#### Класс Сart
+Используется для работы с товарами размещаемых в корзине покупателя
+
+Поля класса:
+`cartProducts: IProduct[]` - Массив хранения всех полученных товаров
+
+Конструктор:  
+`constructor()` - Инициализирует стартовые значения полей класса
+
+Методы класса:
+`getCartProducts(): IProducts[]` - Возвращает текущий массив товаров находящихся в корзине покупателя;
+`setCartProduct(product: IProduct): void:` - Добавляет новый товар в корзину покупателя;
+`removeCartProduct(product: IProduct): void` - Удаление товара находящегося в корзине покупателя;
+`clearCart(): void` - Очистка корзины (удаление всех элементов массива `cartProducts`);
+`getTotalCartPrice(): number` - Возвращает сумму всех товаров в корзине покупателя;
+`getCountCartProducts(): number` - Возвращает количество товаров в корзине покупателя;
+`checkProductInCart(id: string): boolean` - Проверка нахождения товара по id в корзине покупателя;
+
+#### Класс Consumer
+Используется для работы с товарами размещаемых в корзине покупателя
+
+Поля класса:
+`payment: 'TPayment' | 'null'` - Способ оплаты
+`address: string` - Адресс получения товара
+`phone: string` - Телефон получателя
+`email: string` - Email получателя
+
+Конструктор:  
+`constructor()` - Инициализирует стартовые значения полей класса
+
+Методы класса:
+`setConsumerData(Partial<IBuyer>): void` - Сохранение полученных данных в существующие поля класса
+`getConsumerData(): IBuyer` - Получение всех данных о покупателе
+`clearConsumerData(): void` - Очистка данных о покупателе
+`validateConsumerData(): Partial<Record<keyof IBuyer, string>>` - Валидация данных, возвращает объект ошибок
+
+### Слой коммуникации
+Класс выполняющий запрос на сервер с помощью 
+метода get класса Api и получающий с сервера объект с массивом товаров.
+
+#### Класс ApiClient
+Используется для получения и отправки данных на сервер.
+
+Конструктор:  
+`constructor(private api: IApi)` - Инициализирует стартовые значения
+
+Методы класса:
+`async getProductCatalogData(): Promise<IServerProductsData>` - Получение данных о товарах с сервера
+`async postCartData(orderData: IOrderData): Promise<IOrderDataResponse>` - Отправка данных о покупке на сервер
