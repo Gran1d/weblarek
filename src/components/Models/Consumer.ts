@@ -1,4 +1,4 @@
-import {IBuyer, TPayment} from "../../types";
+import {IBuyer, TConsumerErrors, TPayment} from "../../types";
 
 export class Consumer {
     private payment: TPayment | null
@@ -44,19 +44,19 @@ export class Consumer {
         this.email = '';
     }
 
-    validateConsumerData(): Partial<Record<keyof IBuyer, string>>{
-        const errors: Partial<Record<keyof IBuyer, string>> = {};
+    validateConsumerData(): TConsumerErrors {
+        const errors: TConsumerErrors = {};
         if (this.payment === null) {
-            errors.payment = 'Payment is required';
+            errors.payment = "Не выбран тип оплаты";
         }
         if (this.address === '') {
-            errors.address = 'Address is required';
+            errors.address = "Не указан адрес получения";
         }
         if (this.phone === '') {
-            errors.phone = 'Phone is required';
+            errors.phone = "Не указан номер телефона";
         }
         if (this.email === '') {
-            errors.email = 'Email is required';
+            errors.email = "Не указана электронная почта";
         }
 
         return errors;

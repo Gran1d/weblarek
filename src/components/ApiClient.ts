@@ -3,11 +3,11 @@ import {IApi, IOrderData, IOrderDataResponse, IServerProductsData} from "../type
 export class ApiClient {
     constructor(private api: IApi) {};
 
-    async getProductCatalogData(): Promise<IServerProductsData> {
+    getProductCatalogData(): Promise<IServerProductsData> {
         return this.api.get<IServerProductsData>("/product")
     }
 
-    async postCartData(orderData: IOrderData): Promise<IOrderDataResponse> {
+    postCartData(orderData: IOrderData): Promise<IOrderDataResponse> {
         return this.api.post<IOrderDataResponse>("/order", orderData)
     }
 }

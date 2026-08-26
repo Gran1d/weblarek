@@ -7,6 +7,8 @@ export interface IApi {
 
 export type TPayment = 'cash' | 'card';
 
+export type TConsumerErrors = Partial<Record<keyof IBuyer, string>>;
+
 export interface IProduct {
     id: string;
     description: string;

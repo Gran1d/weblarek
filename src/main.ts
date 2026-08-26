@@ -62,41 +62,35 @@ console.log("Данные после очистки: ", consumer.getConsumerData
 
 /// Тестирование Api
 console.log("---------------------------------------------------------");
-const api = new Api(API_URL);
-const apiClient = new ApiClient(api);
+async function testApi() {
+    const api = new Api(API_URL);
+    const apiClient = new ApiClient(api);
 
-console.log("Тестирование get запроса");
-const productCatalogApi = await apiClient.getProductCatalogData();
+    console.log("Тестирование get запроса");
 
-console.log("Получение товаров с сервера: ", productCatalogApi);
-productCatalog.setProducts(productCatalogApi.items);
+    const productCatalogApi = await apiClient.getProductCatalogData();
 
-console.log("Массив каталога после получения данных с сервера: ", productCatalog.getProducts());
+    console.log("Получение товаров с сервера: ", productCatalogApi);
+    productCatalog.setProducts(productCatalogApi.items);
 
-console.log("---------------------------------------------------------");
-console.log("Тестирование post запроса");
+    console.log("Массив каталога после получения данных с сервера: ", productCatalog.getProducts());
 
-consumer.setConsumerData({phone: "+79999999999", address: "gorod 1", email: "go@ya.ru", payment: "card"});
-shoppingCart.setCartProduct(productCatalogApi.items[0]);
-shoppingCart.setCartProduct(productCatalogApi.items[1]);
-shoppingCart.setCartProduct(productCatalogApi.items[3]);
+    console.log("---------------------------------------------------------");
+    console.log("Тестирование post запроса");
 
-const idItemsInShoppingCart : string[] = [];
-shoppingCart.getCartProducts().forEach((item) => {
-    idItemsInShoppingCart.push(item.id);
-})
-const dataToPostTest = {...consumer.getConsumerData(), items: idItemsInShoppingCart, total: shoppingCart.getTotalCartPrice()}
+    consumer.setConsumerData({phone: "+79999999999", address: "gorod 1", email: "go@ya.ru", payment: "card"});
+    shoppingCart.setCartProduct(productCatalogApi.items[0]);
+    shoppingCart.setCartProduct(productCatalogApi.items[1]);
+    shoppingCart.setCartProduct(productCatalogApi.items[3]);
 
-const payResponse = await apiClient.postCartData(dataToPostTest)
-console.log("Ответ после отправки данных на сервер: ", payResponse);
+    const idItemsInShoppingCart : string[] = [];
+    shoppingCart.getCartProducts().forEach((item) => {
+        idItemsInShoppingCart.push(item.id);
+    })
+    const dataToPostTest = {...consumer.getConsumerData(), items: idItemsInShoppingCart, total: shoppingCart.getTotalCartPrice()}
 
+    const payResponse = await apiClient.postCartData(dataToPostTest)
+    console.log("Ответ после отправки данных на сервер: ", payResponse);
+}
 
-
-
-
-
-
-
-
-
-
+testApi().catch(console.error)
