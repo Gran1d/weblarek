@@ -227,3 +227,315 @@ TPayment = 'card' | 'cash';
 Методы класса:
 `async getProductCatalogData(): Promise<IServerProductsData>` - Получение данных о товарах с сервера
 `async postCartData(orderData: IOrderData): Promise<IOrderDataResponse>` - Отправка данных о покупке на сервер
+
+### Слой View
+Классы, интерфейсы и типы данных которые используются для отображения контента.
+
+#### Интерфейс IHeader
+```
+interface IHeader{
+  counter: number;
+}
+```
+
+#### Класс Header extends Components<IHeader>
+Используется для отображения Header'а страницы, в частности для работы с кнопкой и счетчиком корзины.
+Наследование от родительского класса Component
+
+Поля класса:
+`basketButton: HTMLButtonElement` - Кнопка корзины
+`counterElement: HTMLElement` - Элемент счетчика товаров в корзине
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на 
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие.
+
+Методы класса:
+`set counter(value: number)` - Изменяет счетчик корзины. 
+
+#### Интерфейс IGallery
+```
+interface IGallery{
+  catalog: HTMLElement[];
+}
+```
+
+#### Класс Gallery extends Components<IGallery>
+Используется для отображения галереи товаров на странице.
+
+Поля класса:
+`catalogElement: HTMLElement` - Контейнер для отображения карточек товаров.
+
+Конструктор:  
+`constructor(protected container: HTMLElement)` - Принимает ссылку на DOM элемент. 
+Инициализирует стартовые значения полей класса.
+
+Методы класса:
+`set catalog(items: HTMLElement[])` - Добавляет карточки в каталог.
+
+#### Интерфейс IModal
+```
+interface IModal{
+  content: HTMLElement;
+}
+```
+
+#### Класс Modal extends Components<IModal>
+Используется для отображения модального окна.
+
+Поля класса:
+`modalCloseButton: HTMLButtonElement` - Кнопка закрытия модального окна.
+`contentElement: HTMLElement` - Контейнер для содержимого модального окна.
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для закрытия модалки.
+
+Методы класса:
+`set content(item: HTMLElement)` - Добавление контента для модалного окна.
+
+#### Интерфейс ISuccess
+```
+interface ISuccess{
+  description: string;
+}
+```
+
+#### Класс SuccessOrder extends Components<ISuccess>
+Используется для отображения шаблона об успешном заказе.
+
+Поля класса:
+`successDescription: HTMLElement` - Элемент с описанием.
+`successButton: HTMLButtonElement` - Кнопка с возможностью закрытия модального окна
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для закрытия модалки.
+
+Методы класса:
+`set description(text: string)` - Изменение текста описания.
+
+#### Тип TCard
+```
+type TCard = Pick<IProduct, 'title' | 'price'>
+```
+
+#### Класс Card<T> extends Components<TCard & T>
+Выступает в качестве родительского класса для всех реализаций карточки товара.
+
+Поля класса:
+`cardTitle: HTMLElement` - Элемент названия товара.
+`cardPrice: HTMLElement` - Элемент цены товара.
+
+Конструктор:  
+`constructor(protected container: HTMLElement)` - Принимает ссылку на DOM элемент. 
+Инициализирует стартовые значения полей класса.
+
+Методы класса:
+`set title(text: string)` - Изменение названия карточки.
+`set price(value: number | null)` - Изменение цены товара.
+
+
+#### Тип TCardCatalog
+```
+type TCardCatalog = Pick<IProduct, 'category' | 'image'>
+```
+
+#### Класс CardCatalog extends Card<TCardCatalog>
+Используется для отображения карточки товара в каталоге товаров.
+
+Поля класса:
+`cardCategory: HTMLElement` - Элемент категории карточки.
+`cardImage: HTMLImageElement` - Элемент картинки карточки.
+
+Конструктор:  
+`constructor(protected container: HTMLElement, protected ?action: ICardAction)` - Принимает объект типа ICardAction и
+ссылку на DOM элемент. Инициализирует стартовые значения полей класса, а так же добавляет событие для контейнера(кнопка).
+
+Методы класса:
+`set category(value: string)` - Изменение категории карточки и добавление нужного класса для этой категории.
+`set image(value: string)` - Изменение изображения товара.
+
+#### Тип TCardPreview
+```
+type TCardPreview = Pick<IProduct, 'description' | 'image' | 'category'> & {button: TPreviewCardButton}
+```
+
+#### Тип TPreviewCardButton
+```
+type TPreviewCardButton = 'buy' | 'delete' | null;
+```
+
+#### Класс CardPreview extends Card<TCardPreview>
+Используется для отображения карточки товара в модальном окне.
+
+Поля класса:
+`cardCategory: HTMLElement` - Элемент категории карточки.
+`cardButtond: HTMLButtonElement` - Элемент кнопки добавления/удаления в/из корзины.
+`cardImage: HTMLImageElement` - Элемент картинки карточки.
+`cardDescription: HTMLElement;` - Элемент описания карточки.
+
+
+Конструктор:  
+`constructor(protected container: HTMLElement, protected events: IEvents)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для добавления/удаления товара в корзину.
+
+Методы класса:
+`set category(value: string)` - Изменение категории карточки и добавление нужного класса для этой категории.
+`set image(value: string)` - Изменение изображения товара.
+`set description(value: string)` - Изменение описание товара.
+`set buttonText(value: string)` - Изменение текста кнопки.
+`set isDisabled(value: boolean)` - Включение/ выключение кнопки.
+
+#### Интерфейс IBasketGallery
+```
+interface IBasketGallery{
+  basketCatalog: HTMLElement[];
+  totalPrice: number;
+  isDisabled: boolean;
+}
+```
+
+#### Класс BasketGallery extends Components<IBasket>
+Используется для отображения галереи товаров в корзине.
+
+Поля класса:
+`basketElement: HTMLElement` - Контейнер для отображения карточек товаров.
+`basketButton: HTMLButtonElement` - Кнопка оформления заказа.
+`basketPriceElement: HTMLElement` - Элемент с итоговой ценой
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для оформления заказа.
+
+Методы класса:
+`set basketCatalog(items: HTMLElement[])` - Добавляет карточки в каталог.
+`set isDisabled(value: boolean)` - Включение/ выключение кнопки.
+`set totalPrice(value: number)` - Установление итоговой цены.
+
+#### Интерфейс ICardBasket
+```
+interface ICardBasket{
+    index: number
+}
+```
+
+#### Класс CardBasket extends Card<ICardBasket>
+Используется для отображения карточки товара в модальном окне корзины.
+
+Поля класса:
+`cardButton: HTMLButtonElement` - Элемент кнопки удаления товара из корзины.
+`cardIndexElement: HTMLElement` - Элемент индекса.
+
+Конструктор:  
+`constructor(protected container: HTMLElement, protected ?action: ICardAction)` - Принимает объект типа ICardAction и
+ссылку на DOM элемент. Инициализирует стартовые значения полей класса, а так же добавляет событие для кнопки удаления.
+
+Методы класса:
+`set index(value: number)` - Установление индекса.
+
+#### Интерфейс IForm
+```
+interface IForm{
+    errors: string,
+    isDisabled: boolean
+}
+```
+
+#### Класс Form<T> extends Component<IForm & T>
+Родительский класс для форм.
+
+Поля класса:
+`submitButton: HTMLButtonElement` - Элемент кнопки отправки форма.
+`formErrors: HTMLElement` - Элемент ошибок заполнения формы.
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для отправки формы.
+
+Методы класса:
+`set isDisabled(value: boolean)` - Включение/ выключение кнопки.
+`set errors(value: string)` - Включение/ выключение кнопки.
+
+#### Интерфейс IFormOrder
+```
+interface IFormOrder{
+    address: string,
+    payment: TPayment,
+}
+```
+
+#### Класс FormOrder extends Component<IFormOrder>
+Форма с выбором способа оплаты, а так же вводом адреса получения.
+
+Поля класса:
+`cardButton: HTMLButtonElement` - Элемент кнопки оплаты онлайн
+`cashButton: HTMLButtonElement` - Элемент кнопки оплаты наличными.
+`formAddress: HTMLInputElement` - Элемент адреса доставки.
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для отправки формы и выбора способа
+оплаты.
+
+Методы класса:
+`set address(value: string)` - Добавление адреса.
+`set payment(value: TPayment)` - Выбор способа оплаты.
+
+#### Интерфейс IFormContact
+```
+interface IFormContact{
+    email: string,
+    number: string,
+}
+```
+
+#### Класс FormContact extends Component<IFormContact>
+Форма с вводом emal'а, а так же номера телефона.
+
+Поля класса:
+`formEmail: HTMLInputElement` - Элемент ввода почты.
+`formNumber: HTMLInputElement` - Элемент ввода номера телефона.
+
+Конструктор:  
+`constructor(protected events: IEvents, protected container: HTMLElement)` - Принимает брокер события и ссылку на
+DOM элемент. Инициализирует стартовые значения полей класса, а так же эмитит событие для отправки формы.
+
+Методы класса:
+`set email(value: string)` - Добавление почты.
+`set number(value: string)` - Добавление номера телефона.
+
+
+### Презентер
+
+### События приложения
+
+***basket:open*** — открытие корзины. Событие вызывается классом `Header` при нажатии на кнопку корзины. Обработчик открывает модальное окно с содержимым корзины.
+
+***modal:close*** — закрытие модального окна. Событие используется для закрытия текущего модального окна.
+
+***cardButton:clicked*** — нажатие на кнопку добавления товара в корзину или удаления товара из корзины. Обработчик проверяет наличие выбранного товара в `Cart` и в зависимости от результата добавляет его или удаляет.
+
+***order:submit*** — подтверждение первой формы оформления заказа. Событие вызывается после нажатия кнопки «Далее» и открывает вторую форму для ввода контактных данных.
+
+***order:change*** — изменение поля в первой форме заказа. Используется для передачи изменённого адреса доставки в модель `Consumer` и последующей проверки данных.
+
+***contacts:submit*** — подтверждение второй формы оформления заказа. Событие вызывается после нажатия кнопки «Оплатить». На его основе формируется заказ, отправляется запрос на сервер и после успешного ответа открывается окно `SuccessOrder`.
+
+***contacts:change*** — изменение поля во второй форме. Используется для передачи изменённых электронной почты или номера телефона в модель `Consumer` и обновления состояния формы.
+
+***payment:change*** — изменение способа оплаты. Событие вызывается при выборе способа оплаты «Онлайн» или «При получении» и сохраняет выбранное значение в модели `Consumer`.
+
+***basket:changed*** — изменение содержимого корзины. Вызывается моделью `Cart` после добавления, удаления или очистки товаров. Используется для обновления списка товаров, счётчика и общей стоимости корзины.
+
+***consumer:changed*** — изменение данных покупателя в модели `Consumer`. Вызывается после изменения данных покупателя и используется для повторной валидации форм, отображения ошибок и изменения состояния кнопок.
+
+***catalog:changed*** — изменение каталога продуктов. Вызывается после загрузки или обновления списка товаров и используется для создания и отображения карточек каталога.
+
+***catalog:selected*** — изменение выбранного товара. Вызывается после выбора товара и используется для отображения подробной информации о нём в модальном окне.
+
+***catalog:cartClicked*** — нажатие на карточку товара в каталоге. Передаёт выбранный товар в модель `ProductCatalog`, после чего вызывается событие `catalog:selected`.
+
+***card:itemDeleted*** — удаление товара из корзины. Вызывается при нажатии на кнопку удаления у конкретного товара и передаёт этот товар в модель `Cart`.
+
+***basket:order*** — переход от корзины к оформлению заказа. Вызывается при нажатии кнопки «Оформить» и открывает первую форму `FormOrder`.

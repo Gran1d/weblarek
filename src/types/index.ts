@@ -39,3 +39,15 @@ export interface IOrderDataResponse{
     id: string;
     total: number;
 }
+
+export type TCard = Pick<IProduct, 'title' | 'price'>
+
+export type TCardCatalog = Pick<IProduct, 'category' | 'image'>
+
+type TPreviewCardButton = 'buy' | 'delete' | null;
+
+export type TCardPreview = Pick<IProduct, 'description' | 'image' | 'category'> & {button: TPreviewCardButton}
+
+export interface ICardAction {
+    onClick?: () => void,
+}

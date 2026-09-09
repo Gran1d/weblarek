@@ -1,4 +1,5 @@
 import {IBuyer, TConsumerErrors, TPayment} from "../../types";
+import {IEvents} from "../base/Events.ts";
 
 export class Consumer {
     private payment: TPayment | null
@@ -6,7 +7,7 @@ export class Consumer {
     private phone: string
     private email: string
 
-    constructor() {
+    constructor(protected event: IEvents) {
         this.payment = null;
         this.address = '';
         this.phone = '';
@@ -16,15 +17,19 @@ export class Consumer {
     setConsumerData(buyerData: Partial<IBuyer>): void {
         if (buyerData.payment) {
             this.payment = buyerData.payment;
+            this.event.emit('consumer:changed');
         }
         if (buyerData.address) {
             this.address = buyerData.address;
+            this.event.emit('consumer:changed');
         }
         if (buyerData.phone) {
             this.phone = buyerData.phone;
+            this.event.emit('consumer:changed');
         }
         if (buyerData.email) {
             this.email = buyerData.email;
+            this.event.emit('consumer:changed');
         }
     }
 
@@ -42,6 +47,7 @@ export class Consumer {
         this.address = '';
         this.phone = '';
         this.email = '';
+        this.event.emit('consumer:changed');
     }
 
     validateConsumerData(): TConsumerErrors {
