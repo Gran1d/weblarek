@@ -23,6 +23,8 @@ export class BasketGallery extends Component<IBasketGallery> {
         this.basketButton.addEventListener('click', () => {
             this.events.emit('basket:order')
         })
+
+        this.basketButton.disabled = true;
     }
 
     set basketCatalog(items: HTMLElement[]) {

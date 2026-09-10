@@ -18,7 +18,7 @@ export class Card<T> extends Component<TCard & T> {
     }
 
     set price(value: number | null) {
-        if (value){
+        if (value !== null){
             this.cardPrice.textContent = `${value} синапсов`;
         } else {
             this.cardPrice.textContent = 'Бесценно';

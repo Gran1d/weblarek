@@ -9,7 +9,7 @@ import {cloneTemplate, ensureElement} from "./utils/utils.ts";
 import {Gallary} from "./components/Views/Gallery.ts";
 import {CardCatalog} from "./components/Views/CardCatalog.ts";
 import {EventEmitter} from "./components/base/Events.ts";
-import {IProduct} from "./types";
+import {IProduct, TPayment} from "./types";
 import {Header} from "./components/Views/Header.ts";
 import {Modal} from "./components/Views/Modal.ts";
 import {CardPreview} from "./components/Views/CardPreview.ts";
@@ -151,9 +151,6 @@ events.on('basket:changed', () => {
 });
 
 events.on('basket:open', () => {
-    if (cart.getCountCartProducts() === 0) {
-        basketGallery.isDisabled = true;
-    }
     modal.content = basketGallery.render();
     modal.open();
 });
@@ -183,14 +180,8 @@ events.on('contacts:change', ({field, value}: {field: string, value: string}) =>
 });
 
 events.on('payment:change', ({payment}: {payment: string}) => {
-    if (payment === "cash") {
-        formOrder.payment = "cash";
-        consumer.setConsumerData({payment: "cash"})
-    }
-    if (payment === "card"){
-        formOrder.payment = "card"
-        consumer.setConsumerData({payment: "card"})
-    }
+    formOrder.payment = payment as TPayment;
+    consumer.setConsumerData({payment: payment as TPayment})
 });
 
 events.on('consumer:changed', () => {
@@ -200,10 +191,7 @@ events.on('consumer:changed', () => {
     const orderError =
         errors.payment ?? errors.address ?? '';
 
-    if (buyer.payment !== null) {
-        formOrder.payment = buyer.payment;
-    }
-
+    formOrder.payment = buyer.payment;
     formOrder.address = buyer.address;
     formOrder.errors = orderError;
     formOrder.isDisabled = Boolean(orderError);
@@ -238,6 +226,8 @@ events.on('contacts:submit', async () => {
 
         modal.content = successOrder.render();
         modal.render();
+
+        console.log(consumer.getConsumerData())
 
         cart.clearCart();
         consumer.clearConsumerData();

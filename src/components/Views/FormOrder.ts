@@ -36,7 +36,7 @@ export class FormOrder extends Form<IFormOrder> {
         this.formAddress.value = value;
     }
 
-    set payment(value: TPayment) {
+    set payment(value: TPayment | null) {
         this.cardButton.classList.remove("button_alt-active");
         this.cashButton.classList.remove("button_alt-active");
 
