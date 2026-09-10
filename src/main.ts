@@ -227,8 +227,6 @@ events.on('contacts:submit', async () => {
         modal.content = successOrder.render();
         modal.render();
 
-        console.log(consumer.getConsumerData())
-
         cart.clearCart();
         consumer.clearConsumerData();
 
